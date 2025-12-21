@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Study Agent</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="container">
+    <h2>📘 Study Agent</h2>
+
+    <!-- 一般聊天 -->
+    <textarea id="input" rows="4"
+      placeholder="Ask a study question..."></textarea>
+    <br>
+    <button onclick="send()">Ask</button>
+
+    <hr>
+
+    <!-- PDF Assistant -->
+    <h3>📄 PDF Study Assistant</h3>
+
+    <input type="file" id="pdfFile" accept=".pdf"><br><br>
+
+    <label>功能：</label>
+    <select id="task">
+      <option value="summary">摘要</option>
+      <option value="quiz">出考題</option>
+    </select>
+
+    <label>摘要模式：</label>
+    <select id="mode">
+      <option value="overall">全文重點</option>
+      <option value="per_page">每頁重點</option>
+    </select>
+
+    <label>考題類型：</label>
+    <select id="quiz">
+      <option value="mixed">混合</option>
+      <option value="mcq">單選題</option>
+      <option value="qa">問答題</option>
+    </select>
+
+    <br><br>
+    <button onclick="sendPDF()">Analyze PDF</button>
+
+    <hr>
+
+    <pre id="output"></pre>
+  </div>
+
+<script>
+async function send() {
+  const msg = document.getElementById("input").value;
+  const output = document.getElementById("output");
+  output.textContent = "Thinking...";
+
+  const res = await fetch("/chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: msg })
+  });
+
+  const data = await res.json();
+
+  output.textContent =
+    data.message?.content ||
+    data.choices?.[0]?.message?.content ||
+    JSON.stringify(data, null, 2);
+}
+
+
+async function sendPDF() {
+  const file = document.getElementById("pdfFile").files[0];
+  const task = document.getElementById("task").value;
+  const mode = document.getElementById("mode").value;
+  const quiz = document.getElementById("quiz").value;
+  const output = document.getElementById("output");
+
+  if (!file) {
+    alert("請上傳 PDF");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("pdf", file);
+  formData.append("task", task);
+  formData.append("mode", mode);
+  formData.append("quiz", quiz);
+
+  output.textContent = "📖 Analyzing PDF...";
+
+  const res = await fetch("/pdf_chat", {
+    method: "POST",
+    body: formData
+  });
+
+  const data = await res.json();
+
+  if (data.error) {
+    output.textContent = "Error: " + data.error;
+    return;
+  }
+
+  output.textContent =
+    `📄 PDF Pages: ${data.pages}\n\n` +
+    (data.result.message?.content ||
+     data.result.choices?.[0]?.message?.content ||
+     JSON.stringify(data, null, 2));
+}
+</script>
+</body>
+</html>
+
+
+
