@@ -42,6 +42,8 @@
 
 ## 三、系統架構
 
+Browser (HTML / JavaScript) ↓ Flask Backend (Python) ↓ PDF Parser (PyPDF2) ↓ LLM API (Gemma Model)
+
 Browser (HTML / JavaScript)
              ↓
 EXE (Flask Backend + PDF Parser)
