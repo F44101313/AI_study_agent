@@ -4,7 +4,7 @@
 
 **Study Agent** 是一個基於 Large Language Model（LLM）的學習輔助系統，結合 Flask 後端與 Web 前端，提供：
 
-* 一般即時學習問答（Chat Agent）
+* 一般即時學習問答
 * PDF 文件上傳後的分析（摘要 / 自動出題）
 
 本系統特別設計用於 **課堂講義理解、考前複習、自主學習** 等情境。
