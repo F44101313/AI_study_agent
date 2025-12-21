@@ -1,18 +1,37 @@
+import threading
+import webbrowser
+import time
+
 from flask import Flask, request, jsonify, render_template
 import requests
 import PyPDF2
 
 app = Flask(__name__)
 
-# ===== LLM API 設定 =====
+# =========================
+# LLM API 設定
+# =========================
 LLM_URL = "https://api-gateway.netdb.csie.ncku.edu.tw/api/chat"
 API_KEY = "49ffb0933f3932bb3c3b675f0e9cb9be39b45b635d0feeba44ad9f4eb51fd70f"
 
-# ===== PDF 限制 =====
+# =========================
+# PDF 限制（設計考量）
+# =========================
 MAX_PDF_PAGES = 300
 MAX_TEXT_LENGTH = 5000
 
 
+# =========================
+# 自動開瀏覽器（exe 用）
+# =========================
+def open_browser():
+    time.sleep(1)  # 等 Flask 起來
+    webbrowser.open("http://127.0.0.1:5000")
+
+
+# =========================
+# Routes
+# =========================
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -41,7 +60,10 @@ def chat():
         r.raise_for_status()
         return jsonify(r.json())
     except requests.exceptions.RequestException as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({
+            "error": "API request failed",
+            "detail": str(e)
+        }), 500
 
 
 @app.route("/pdf_chat", methods=["POST"])
@@ -54,7 +76,11 @@ def pdf_chat():
     if not pdf_file:
         return jsonify({"error": "No PDF uploaded"}), 400
 
-    reader = PyPDF2.PdfReader(pdf_file)
+    try:
+        reader = PyPDF2.PdfReader(pdf_file)
+    except Exception:
+        return jsonify({"error": "Invalid PDF file"}), 400
+
     num_pages = len(reader.pages)
 
     if num_pages > MAX_PDF_PAGES:
@@ -66,12 +92,14 @@ def pdf_chat():
     for i, page in enumerate(reader.pages):
         text = page.extract_text()
         if text:
-            pages_text.append(f"[Page {i+1}]\n{text}")
+            pages_text.append(f"[Page {i + 1}]\n{text}")
 
     full_text = "\n".join(pages_text)
     full_text = full_text[:MAX_TEXT_LENGTH]
 
-    # ===== Prompt Engineering =====
+    # =========================
+    # Prompt Engineering
+    # =========================
     if task == "summary":
         if mode == "per_page":
             prompt = f"""
@@ -127,11 +155,19 @@ def pdf_chat():
         })
 
     except requests.exceptions.RequestException as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({
+            "error": "API request failed",
+            "detail": str(e)
+        }), 500
 
 
+# =========================
+# Main（exe 入口）
+# =========================
 if __name__ == "__main__":
-    app.run(port=5000, debug=True)
+    threading.Thread(target=open_browser).start()
+    app.run(host="127.0.0.1", port=5000, debug=False)
+
 
 
 
