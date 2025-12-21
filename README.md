@@ -92,13 +92,13 @@ study-agent/
 
 ## 六、安裝與執行方式
 
-### Step 1. 下載 EXE
+### Step 1.
 
-- 將 `server.exe` 從 `dist` 資料夾拿出即可，不需安裝 Python。
+- 從 `dist` 資料夾找到`server.exe`。
 
 ### Step 2. 執行 EXE
 
-- 雙擊 `server.exe` 或在命令列執行：
+- 點擊 `server.exe` 或在命令列執行：
 
 ```bash
 dist\server.exe
