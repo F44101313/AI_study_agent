@@ -42,13 +42,15 @@
 
 ## 三、系統架構
 
-Browser (HTML / JavaScript) ↓ Flask Backend (Python) ↓ PDF Parser (PyPDF2) ↓ LLM API (Gemma Model)
+使用者 (瀏覽器) 
+        ↓
+Study Agent EXE
+ ├─ Flask Web Server (後端處理請求)
+ ├─ PDF Parser (PyPDF2 讀取與抽取文字)
+ └─ LLM API (Gemma 3 模型進行摘要/出題)
+        ↓
+回傳結果到瀏覽器
 
-Browser (HTML / JavaScript)
-             ↓
-EXE (Flask Backend + PDF Parser)
-             ↓
-LLM API (Gemma Model)
 ---
 
 ## 四、技術說明
@@ -74,12 +76,13 @@ LLM API (Gemma Model)
 
 study-agent/
 │
-├─ server.py # Flask 後端主程式
+├─ server.py              # Flask 後端主程式，負責處理所有 HTTP 請求及 LLM 互動
 ├─ templates/
-│ └─ index.html # 前端介面
+│   └─ index.html         # 前端 HTML 介面
 ├─ static/
-│ └─ style.css # 樣式
-└─ README.md # 專案說明文件
+│   └─ style.css          # 前端樣式 CSS
+└─ README.md              # 專案說明文件
+
 
 ---
 
