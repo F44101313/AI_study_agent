@@ -43,9 +43,9 @@
 ## 三、系統架構
 
 Browser (HTML / JavaScript)
-↓
+             ↓
 EXE (Flask Backend + PDF Parser)
-↓
+             ↓
 LLM API (Gemma Model)
 ---
 
@@ -120,5 +120,5 @@ http://127.0.0.1:5000
 - 摘要 / 出題
 - 摘要模式或題型
 
-系統分析 PDF 並回傳結果
+4. 系統分析 PDF 並回傳結果
 ---
