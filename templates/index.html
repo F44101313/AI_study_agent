@@ -1,59 +1,65 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
   <meta charset="UTF-8">
   <title>Study Agent</title>
   <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-  <div class="container">
-    <h2>📘 Study Agent</h2>
+<div class="container">
+  <h2>📘 Study Agent</h2>
 
-    <!-- 一般聊天 -->
-    <textarea id="input" rows="4"
-      placeholder="Ask a study question..."></textarea>
-    <br>
-    <button onclick="send()">Ask</button>
+  <button onclick="newChat()">🆕 新對話</button>
 
-    <hr>
+  <hr>
 
-    <!-- PDF Assistant -->
-    <h3>📄 PDF Study Assistant</h3>
+  <!-- 對話紀錄框 -->
+  <textarea id="chatLog" rows="15" readonly placeholder="對話紀錄..."></textarea><br>
 
-    <input type="file" id="pdfFile" accept=".pdf"><br><br>
+  <!-- 輸入框 -->
+  <textarea id="chatInput" rows="4" placeholder="在此輸入訊息..."></textarea><br>
+  <button onclick="send()">送出</button>
 
-    <label>功能：</label>
-    <select id="task">
-      <option value="summary">摘要</option>
-      <option value="quiz">出考題</option>
-    </select>
+  <hr>
 
-    <label>摘要模式：</label>
-    <select id="mode">
-      <option value="overall">全文重點</option>
-      <option value="per_page">每頁重點</option>
-    </select>
+  <h3>📄 PDF Study Assistant</h3>
 
-    <label>考題類型：</label>
-    <select id="quiz">
-      <option value="mixed">混合</option>
-      <option value="mcq">單選題</option>
-      <option value="qa">問答題</option>
-    </select>
+  <input type="file" id="pdfFile" accept=".pdf"><br><br>
 
-    <br><br>
-    <button onclick="sendPDF()">Analyze PDF</button>
+  <label>功能：</label>
+  <select id="task">
+    <option value="summary">摘要</option>
+    <option value="quiz">出考題</option>
+  </select>
 
-    <hr>
+  <label>考題類型：</label>
+  <select id="quiz">
+    <option value="mixed">混合</option>
+    <option value="mcq">單選題</option>
+    <option value="qa">問答題</option>
+  </select>
 
-    <pre id="output"></pre>
-  </div>
+  <br><br>
+  <button onclick="sendPDF()">分析 PDF</button>
+</div>
 
 <script>
+const chatLog = document.getElementById("chatLog");
+const chatInput = document.getElementById("chatInput");
+
+async function newChat() {
+  await fetch("/reset", { method: "POST" });
+  chatLog.value = "✨ 新對話開始\n";
+  chatInput.value = "";
+}
+
 async function send() {
-  const msg = document.getElementById("input").value;
-  const output = document.getElementById("output");
-  output.textContent = "Thinking...";
+  const msg = chatInput.value.trim();
+
+  if (!msg) return;
+
+  chatLog.value += `\n🧑 ${msg}\n`;
+  chatInput.value = ""; // 清空輸入框
 
   const res = await fetch("/chat", {
     method: "POST",
@@ -62,20 +68,16 @@ async function send() {
   });
 
   const data = await res.json();
+  chatLog.value += `🤖 ${data.reply}\n`;
 
-  output.textContent =
-    data.message?.content ||
-    data.choices?.[0]?.message?.content ||
-    JSON.stringify(data, null, 2);
+  // 自動滾動到底部
+  chatLog.scrollTop = chatLog.scrollHeight;
 }
-
 
 async function sendPDF() {
   const file = document.getElementById("pdfFile").files[0];
   const task = document.getElementById("task").value;
-  const mode = document.getElementById("mode").value;
   const quiz = document.getElementById("quiz").value;
-  const output = document.getElementById("output");
 
   if (!file) {
     alert("請上傳 PDF");
@@ -85,32 +87,16 @@ async function sendPDF() {
   const formData = new FormData();
   formData.append("pdf", file);
   formData.append("task", task);
-  formData.append("mode", mode);
   formData.append("quiz", quiz);
 
-  output.textContent = "📖 Analyzing PDF...";
+  chatLog.value += "\n📖 分析 PDF 中...\n";
 
-  const res = await fetch("/pdf_chat", {
-    method: "POST",
-    body: formData
-  });
-
+  const res = await fetch("/pdf_chat", { method: "POST", body: formData });
   const data = await res.json();
+  chatLog.value += `🤖 ${data.reply}\n`;
 
-  if (data.error) {
-    output.textContent = "Error: " + data.error;
-    return;
-  }
-
-  output.textContent =
-    `📄 PDF Pages: ${data.pages}\n\n` +
-    (data.result.message?.content ||
-     data.result.choices?.[0]?.message?.content ||
-     JSON.stringify(data, null, 2));
+  chatLog.scrollTop = chatLog.scrollHeight;
 }
 </script>
 </body>
 </html>
-
-
-
