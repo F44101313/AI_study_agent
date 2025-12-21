@@ -42,3 +42,83 @@
 
 ## 三、系統架構
 
+Browser (HTML / JavaScript)
+↓
+EXE (Flask Backend + PDF Parser)
+↓
+LLM API (Gemma Model)
+---
+
+## 四、技術說明
+
+### 使用技術
+
+- **前端**：HTML, JavaScript
+- **後端**：Flask (Python，封裝於 EXE)
+- **PDF 解析**：PyPDF2
+- **LLM 模型**：Gemma 3 (4B)
+- **API 呼叫**：RESTful API
+
+### Prompt Engineering
+
+系統根據使用者選擇的功能（摘要 / 出題），動態產生不同 Prompt，例如：
+
+- 摘要模式：要求條列重點並標示頁碼
+- 出題模式：限制題型、數量並附答案
+
+---
+
+## 五、專案結構（打包前）
+
+study-agent/
+│
+├─ server.py # Flask 後端主程式
+├─ templates/
+│ └─ index.html # 前端介面
+├─ static/
+│ └─ style.css # 樣式
+└─ README.md # 專案說明文件
+
+---
+
+## 六、安裝與執行方式（EXE 版）
+
+### Step 1. 下載 EXE
+
+- 將 `server.exe` 從 `dist` 資料夾拿出即可。
+
+### Step 2. 執行 EXE
+
+- 雙擊 `server.exe` 或在命令列執行：
+
+```bash
+dist\server.exe
+```
+系統會自動啟動本機 Flask server 並打開瀏覽器。
+
+Step 3. 使用介面
+網頁會自動開啟：
+
+```cpp
+http://127.0.0.1:5000
+```
+可直接輸入問題或上傳 PDF 使用摘要/出題功能。
+
+---
+
+## 七、操作流程說明
+
+1. 雙擊 EXE，系統啟動，瀏覽器自動開啟首頁
+
+2. 選擇功能：
+
+- 一般問答
+- PDF 文件分析
+
+3. 選擇模式：
+
+- 摘要 / 出題
+- 摘要模式或題型
+
+系統分析 PDF 並回傳結果
+---
