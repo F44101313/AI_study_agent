@@ -84,7 +84,7 @@ study-agent/
 ├─ templates/
 │   └─ index.html         # 前端介面
 ├─ static/
-│   └─ style.css          # 樣式（非必要）
+│   └─ style.css          # 樣式
 └─ README.md              # 專案說明文件
 ```
 
