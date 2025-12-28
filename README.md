@@ -2,7 +2,7 @@
 
 ## 一、系統功能
 
-此**Study Agent** 是一個基於 Large Language Model（LLM）的學習輔助系統，結合 Flask 後端與 Web 前端，提供：
+此 **Study Agent** 是一個基於 Large Language Model（LLM）的學習輔助系統，結合 Flask 後端與 Web 前端，提供：
 ### 1. 一般學習問答
 
 * 使用者可直接輸入問題
@@ -28,7 +28,7 @@
 
 ---
 
-## 三、系統架構
+## 二、系統架構
 
 ```
 使用者 (瀏覽器) 
@@ -44,15 +44,14 @@ Study Agent EXE
 
 ---
 
-## 四、技術說明
+## 三、技術說明
 
 ###  使用技術
 
-* **Frontend**：HTML, JavaScript, CSS
-* **Backend**：Flask (Python)
+* **前端**：HTML, JavaScript, CSS
+* **後端**：Flask (Python)
 * **PDF 解析**：PyPDF2
-* **LLM 模型**：Gemma 3 (4B)
-* **API 呼叫**：RESTful API
+* **LLM 模型**：Gemma 3.4B
 
 ###  Prompt Engineering
 
@@ -63,7 +62,7 @@ Study Agent EXE
 
 ---
 
-## 五、專案結構(打包成exe前)
+## 四、專案結構(打包成exe前)
 
 ```
 study-agent/
@@ -78,7 +77,7 @@ study-agent/
 
 ---
 
-## 六、安裝與執行方式
+## 五、安裝與執行方式
 
 ### Step 1.
 
@@ -100,7 +99,7 @@ http://127.0.0.1:5000
 ```
 - 可直接輸入問題或上傳 PDF 使用摘要/出題功能。
 
-## 七、操作流程說明
+## 六、操作流程說明
 
 1. 啟動系統並進入首頁
 2. 選擇：
