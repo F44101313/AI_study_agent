@@ -1,11 +1,12 @@
-import threading
-import webbrowser
+import threading              # 用於背景執行（自動開瀏覽器）
+import webbrowser             # 控制系統瀏覽器
 import time
 
 from flask import Flask, request, jsonify, render_template
 import requests
-import PyPDF2
+import PyPDF2                 # PDF 文字擷取套件
 
+# Flask App 初始化
 app = Flask(__name__)
 
 # LLM API 設定
@@ -29,22 +30,23 @@ SYSTEM_PROMPT = "你是一個專業的學習助理，請使用繁體中文回答
 
 # 自動開瀏覽器
 def open_browser():
-    time.sleep(1)
+    time.sleep(1)    # Flask 啟動後延遲 1 秒，自動打開瀏覽器
     webbrowser.open("http://127.0.0.1:5000")
 
 # Routes
+# 首頁
 @app.route("/")
 def index():
     return render_template("index.html")
 
-
+# 清空對話紀錄
 @app.route("/reset", methods=["POST"])
 def reset():
     global conversation_history
     conversation_history = []
     return jsonify({"status": "ok"})
 
-
+# 一般聊天模式
 @app.route("/chat", methods=["POST"])
 def chat():
     global conversation_history
@@ -52,29 +54,34 @@ def chat():
     data = request.json
     user_msg = data.get("message", "")
 
+    # 若是第一輪對話，先放入 system prompt
     if not conversation_history:
         conversation_history.append({
             "role": "system",
             "content": SYSTEM_PROMPT
         })
 
+    # 加入使用者訊息
     conversation_history.append({
         "role": "user",
         "content": user_msg
     })
 
+    # LLM API payload
     payload = {
         "model": "gemma3:4b",
         "messages": conversation_history,
         "stream": False
     }
 
+    # 呼叫 LLM API
     try:
         r = requests.post(LLM_URL, json=payload, headers=HEADERS, timeout=30)
         r.raise_for_status()
         result = r.json()
         print("LLM Response:", result)
 
+        # 解析不同可能的回傳格式
         assistant_msg = ""
         if "message" in result and "content" in result["message"]:
             assistant_msg = result["message"]["content"]
@@ -83,30 +90,36 @@ def chat():
         else:
             assistant_msg = "LLM 回傳格式不正確"
 
+        # 將 assistant 回覆存入歷史紀錄
         conversation_history.append({
             "role": "assistant",
             "content": assistant_msg
         })
 
+        # 回傳給前端
         return jsonify({"reply": assistant_msg})
 
+    # API錯誤處理
     except requests.exceptions.RequestException as e:
         return jsonify({"error": str(e)}), 500
 
-
+# PDF學習模式
 @app.route("/pdf_chat", methods=["POST"])
 def pdf_chat():
     global conversation_history
 
+    # 取得表單參數
     task = request.form.get("task")        # summary | quiz
     quiz_type = request.form.get("quiz")   # mcq | qa | mixed
     pdf_file = request.files.get("pdf")
 
     print("Received PDF task:", task, "quiz_type:", quiz_type)
 
+    # 檢查是否有上傳PDF
     if not pdf_file:
         return jsonify({"error": "No PDF uploaded"}), 400
 
+    # 嘗試讀取PDF
     try:
         reader = PyPDF2.PdfReader(pdf_file)
     except Exception:
@@ -126,12 +139,14 @@ def pdf_chat():
     if not full_text.strip():
         return jsonify({"error": "PDF 無法提取文字"}), 400
 
+    # 初始化system prompt
     if not conversation_history:
         conversation_history.append({
             "role": "system",
             "content": SYSTEM_PROMPT
         })
 
+    # 根據任務生成prompt
     if task == "summary":
         prompt = f"""
 以下是 PDF 講義內容，請統整全文重點。
@@ -155,6 +170,7 @@ def pdf_chat():
 請以清楚編號格式列出每一題。
 """
 
+    # 將PDF prompt當作user訊息送出
     conversation_history.append({
         "role": "user",
         "content": prompt
@@ -196,8 +212,9 @@ def pdf_chat():
 
 # Main
 if __name__ == "__main__":
-    threading.Thread(target=open_browser).start()
-    app.run(host="127.0.0.1", port=5000, debug=False)
+    threading.Thread(target=open_browser).start()      # 背景執行自動開瀏覽器
+    app.run(host="127.0.0.1", port=5000, debug=False)  # 啟動Flask Server
+
 
 
 
