@@ -8,9 +8,7 @@ import PyPDF2
 
 app = Flask(__name__)
 
-# =========================
 # LLM API 設定
-# =========================
 LLM_URL = "https://api-gateway.netdb.csie.ncku.edu.tw/api/chat"
 API_KEY = "49ffb0933f3932bb3c3b675f0e9cb9be39b45b635d0feeba44ad9f4eb51fd70f"
 
@@ -19,32 +17,22 @@ HEADERS = {
     "Content-Type": "application/json"
 }
 
-# =========================
 # PDF 限制
-# =========================
 MAX_PDF_PAGES = 300
 MAX_TEXT_LENGTH = 100000
 
-# =========================
-# 對話狀態（核心）
-# =========================
+# 對話歷史紀錄
 conversation_history = []
 
-# =========================
-# System Prompt（固定中文）
-# =========================
+# System Prompt
 SYSTEM_PROMPT = "你是一個專業的學習助理，請使用繁體中文回答。"
 
-# =========================
 # 自動開瀏覽器
-# =========================
 def open_browser():
     time.sleep(1)
     webbrowser.open("http://127.0.0.1:5000")
 
-# =========================
 # Routes
-# =========================
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -206,12 +194,11 @@ def pdf_chat():
         return jsonify({"error": str(e)}), 500
 
 
-# =========================
 # Main
-# =========================
 if __name__ == "__main__":
     threading.Thread(target=open_browser).start()
     app.run(host="127.0.0.1", port=5000, debug=False)
+
 
 
 
