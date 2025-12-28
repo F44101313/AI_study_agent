@@ -67,12 +67,12 @@ Study Agent EXE
 ```
 study-agent/
 │
-├─ server.py              # Flask 後端主程式
+├─ server.py              # 後端主程式
 ├─ templates/
 │   └─ index.html         # 前端介面
 ├─ static/
 │   └─ style.css          # 樣式
-└─ README.md              # 專案說明文件
+└─ README.md              
 ```
 
 ---
