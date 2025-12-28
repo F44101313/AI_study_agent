@@ -1,16 +1,8 @@
 # Study Agent – PDF-based AI Study Assistant
 
-## 一、簡介
+## 一、系統功能
 
 **Study Agent** 是一個基於 Large Language Model（LLM）的學習輔助系統，結合 Flask 後端與 Web 前端，提供：
-
-* 一般即時學習問答（Chat Agent）
-* PDF 文件上傳後的智慧分析（摘要 / 自動出題）
-
----
-
-## 二、系統功能
-
 ### 1. 一般學習問答
 
 * 使用者可直接輸入問題
