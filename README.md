@@ -117,5 +117,4 @@ http://127.0.0.1:5000
 ```bash
 taskkill /f /im server.exe
 ```
-- 然後再重開EXE一次
----
+然後再重開EXE一次
