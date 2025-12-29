@@ -35,7 +35,7 @@
 Study Agent EXE
  ├─ Flask Web Server (後端處理請求)
  ├─ PDF Parser (PyPDF2 讀取與抽取文字)
- └─ LLM API (Gemma 3.4B 模型進行摘要/出題)
+ └─ LLM API (gemma3:4b 模型進行摘要/出題)
         ↓
 回傳結果到瀏覽器
 
@@ -50,7 +50,7 @@ Study Agent EXE
 * **前端**：HTML, JavaScript, CSS
 * **後端**：Flask (Python)
 * **PDF 解析**：PyPDF2
-* **LLM 模型**：Gemma 3.4B
+* **LLM 模型**：gemma3:4b
 
 ###  Prompt Engineering
 
