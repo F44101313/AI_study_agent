@@ -7,7 +7,6 @@
 
 * 使用者可直接輸入問題
 * 系統透過 LLM 即時回覆
-* 適合概念釐清與即時提問
 
 ### 2. PDF 學習輔助
 
@@ -81,11 +80,11 @@ study-agent/
 
 ### Step 1.
 
-- 從 `dist` 資料夾找到`server.exe`。
+- 下載後從 `dist` 資料夾找到`server.exe`。
 
 ### Step 2. 執行 EXE
 
-- 點擊 `server.exe` 或在命令列執行：
+- 點擊 `server.exe` 或在terminal執行：
 
 ```bash
 dist\server.exe
@@ -115,7 +114,7 @@ http://127.0.0.1:5000
 1.PDF檔案沒有讀到
 * 重新選擇檔案上傳一次
 * 在terminal執行：
-```powershell
+```bash
 taskkill /f /im server.exe
 ```
 再重開EXE一次
