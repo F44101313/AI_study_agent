@@ -112,6 +112,11 @@ http://127.0.0.1:5000
 ---
 ## 七、可能的bug
 
-1.檔案沒有讀到
+1.PDF檔案沒有讀到
 * 重新選擇檔案上傳一次
-* 整個重開一次
+* 在terminal執行：
+```powershell
+taskkill /f /im server.exe
+```
+再重開EXE一次
+---
